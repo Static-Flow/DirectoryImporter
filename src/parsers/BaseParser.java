@@ -4,6 +4,7 @@ import burp.HttpRequestResponse;
 import burp.IBurpExtenderCallbacks;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -20,16 +21,28 @@ import java.net.URL;
  * have to implement the parseDirectory function which directs the extension
  * on how to parse each line of output.
  */
-abstract class BaseParser extends JPanel implements ActionListener {
+abstract public class BaseParser extends JPanel implements ActionListener {
     private IBurpExtenderCallbacks callbacks;
     private JButton openButton;
     private final JFileChooser fc = new JFileChooser();
+    private JPanel tabPanel;
 
     BaseParser(IBurpExtenderCallbacks callbacks){
         this.callbacks = callbacks;
-        openButton = new JButton("Open a File...");
+        tabPanel = new JPanel(new GridLayout(3,1));
+        openButton = new JButton("Open Bruteforce output file...");
         openButton.addActionListener(this);
-        add(openButton);
+        tabPanel.add(openButton);
+        tabPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+        add(tabPanel);
+    }
+
+    /***
+     * Gets the tabs panel so extending classes can add their options to it
+     * @return JPanel
+     */
+    public JPanel getTabPanel() {
+        return tabPanel;
     }
 
     /**
@@ -49,6 +62,20 @@ abstract class BaseParser extends JPanel implements ActionListener {
      */
     abstract URL parseDirectory(String urlString) throws MalformedURLException;
 
+    /***
+     * This method is implemented by extending classes to display options to the user on how to
+     * configure parsing the brute-force output
+     * @return Jpanel containing option elements
+     */
+    abstract JPanel buildOptionsPanel();
+
+    /***
+     * Intake method to take each line of output from the brute force tool, pass it to parseDirectory
+     * and creates a burp object from the returned URL.
+     * @param urlString line of output from brute force tool
+     * @return HttpRequestResponse created from the URL
+     * @throws MalformedURLException
+     */
     private HttpRequestResponse generateRequestResponse(String urlString)
             throws MalformedURLException{
         URL url = parseDirectory(urlString);
@@ -90,8 +117,12 @@ abstract class BaseParser extends JPanel implements ActionListener {
                                                 requestResponse.getRequest()));
                         new Thread(task2).start();
                     }
+                    JOptionPane.showMessageDialog(BaseParser.this, "Successfully imported!",
+                            "Directory Importer", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     try {
+                        JOptionPane.showMessageDialog(BaseParser.this, "Error while importing.",
+                                "Directory Importer", JOptionPane.INFORMATION_MESSAGE);
                         this.callbacks.getStderr().write(ex.getMessage().getBytes());
                     } catch (IOException exc) {
                         this.callbacks.unloadExtension();

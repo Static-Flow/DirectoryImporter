@@ -1,5 +1,6 @@
 package burp;
 
+import parsers.DirSearchParser;
 import parsers.GoBusterParser;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ class ImporterPanel extends JPanel {
         super(new GridLayout(1, 1));
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("GoBuster", new GoBusterParser(callbacks));
+        tabbedPane.addTab("Dirsearch", new DirSearchParser(callbacks));
         add(tabbedPane);
 
     }
