@@ -1,7 +1,9 @@
 # DirectoryImporter
 This is a Burpsuite plugin built to enable you to import your directory bruteforcing results into burp for easy viewing later. This is an alternative to proxying bruteforcing tools through burp to catch the results.
 
-It is modularized for easily adding parsing of different bruteforcing tools. An example for GoBuster is added to this repo.
+It is modularized for easily adding parsing of different bruteforcing tools. An example for GoBuster and DirSearch are added to this repo.
+
+It can also be found within the BApp store under Directory Importer!
 
 # Module Creation
 
