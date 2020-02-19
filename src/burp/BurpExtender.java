@@ -11,6 +11,7 @@ public class BurpExtender
         this.callbacks = iBurpExtenderCallbacks;
         this.callbacks.setExtensionName("Directory Importer");
         this.callbacks.addSuiteTab(this);
+
     }
 
     public String getTabCaption() {
