@@ -96,7 +96,7 @@ abstract public class BaseParser extends JPanel implements ActionListener {
         reqResp.setHttpService(this.getCallbacks().getHelpers()
                 .buildHttpService(
                         url.getHost(),
-                        url.getProtocol().equals("https") ? 443 : 80,
+                        url.getPort() == -1 ? 443 : url.getPort(),
                         url.getProtocol().equals("https")));
         return reqResp;
     }
