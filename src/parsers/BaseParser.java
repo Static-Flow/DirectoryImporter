@@ -93,10 +93,12 @@ abstract public class BaseParser extends JPanel implements ActionListener {
         byte[] httpRequest = this.getCallbacks().getHelpers()
                 .buildHttpRequest(url);
         reqResp.setRequest(httpRequest);
+        int port = url.getPort();
+        if (port == -1) { port = url.getDefaultPort(); }
         reqResp.setHttpService(this.getCallbacks().getHelpers()
                 .buildHttpService(
                         url.getHost(),
-                       url.getPort(),
+                        port,
                         url.getProtocol().equals("https")));
         return reqResp;
     }
@@ -149,30 +151,33 @@ abstract public class BaseParser extends JPanel implements ActionListener {
                              new BufferedReader(new FileReader(file))) {
                     String st;
                     while ((st = br.readLine()) != null) {
-
-                        HttpRequestResponse requestResponse =
-                                this.generateRequestResponse(st);
-                        System.out.println(requestResponse.getHttpService().getHost());
-                        System.out.println(requestResponse.getHttpService().getPort());
-                        Runnable task = () -> {
-                            if(makeRequestsCheckBox.isSelected()) {
-                                IHttpRequestResponse request = callbacks.makeHttpRequest(
-                                        requestResponse.getHttpService(),
-                                        requestResponse.getRequest());
-                                if (followRedirectsCheckBox.isSelected()) {
-                                    IHttpRequestResponse response = followRedirects(request, 0);
-                                    callbacks.addToSiteMap(response);
+                        try {
+                            HttpRequestResponse requestResponse
+                                = this.generateRequestResponse(st);
+                            System.out.println(requestResponse.getHttpService().getHost());
+                            System.out.println(requestResponse.getHttpService().getPort());
+                            Runnable task = () -> {
+                                if(makeRequestsCheckBox.isSelected()) {
+                                    IHttpRequestResponse request = callbacks.makeHttpRequest(
+                                            requestResponse.getHttpService(),
+                                            requestResponse.getRequest());
+                                    if (followRedirectsCheckBox.isSelected()) {
+                                        IHttpRequestResponse response = followRedirects(request, 0);
+                                        callbacks.addToSiteMap(response);
+                                    } else {
+                                        this.callbacks.addToSiteMap(
+                                                this.callbacks.makeHttpRequest(
+                                                        requestResponse.getHttpService(),
+                                                        requestResponse.getRequest()));
+                                    }
                                 } else {
-                                    this.callbacks.addToSiteMap(
-                                            this.callbacks.makeHttpRequest(
-                                                    requestResponse.getHttpService(),
-                                                    requestResponse.getRequest()));
+                                    this.callbacks.addToSiteMap(requestResponse);
                                 }
-                            } else {
-                                this.callbacks.addToSiteMap(requestResponse);
-                            }
-                        };
-                        new Thread(task).start();
+                            };
+                            new Thread(task).start();
+                        } catch (MalformedURLException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                     JOptionPane.showMessageDialog(BaseParser.this, "Successfully imported!",
                             "Directory Importer", JOptionPane.INFORMATION_MESSAGE);
