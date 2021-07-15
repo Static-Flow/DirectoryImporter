@@ -20,8 +20,8 @@ public class FfufParser extends BaseParser {
     }
 
     /***
-     * This is slightly more complex since there are multiple output formats: csv, ecsv, and md
-     * json, ejson, and html aren't supported (yet). Sorry.
+     * This is slightly more complex since there are multiple output formats: csv, ecsv, html, and md
+     * json and ejson aren't supported (yet). Sorry.
      * @param urlString line of output containing a url
      * @return URL object
      * @throws MalformedURLException
@@ -41,6 +41,13 @@ public class FfufParser extends BaseParser {
                     } else if(radioButton.getText().equalsIgnoreCase("csv")
                         | radioButton.getText().equalsIgnoreCase("ecsv")){
                         return new URL(urlString.split(",")[1]);
+                    } else if(radioButton.getText().equalsIgnoreCase("html")) {
+                        // check that line is a URL
+                        if (urlString.matches(".*<td><a href=\".*\">.*</a></td>")) {
+                            int start = urlString.indexOf("<td>") + "<td><a href=\"".length();
+                            int end = urlString.indexOf("\"", start);
+                            return new URL(urlString.substring(start, end));
+                        }
                     }
                 }
             }
@@ -54,7 +61,7 @@ public class FfufParser extends BaseParser {
      */
     @Override
     JPanel buildOptionsPanel() {
-        String[] outputTypes = {"md", "csv", "ecsv"};
+        String[] outputTypes = {"md", "csv", "ecsv", "html"};
         JPanel optionsPanel = new JPanel(new GridLayout(0,1));
         optionsPanel.add(new JLabel("Please specify which output mode you used when running Ffuf"));
         ButtonGroup ffufOutputTypeGroup = new ButtonGroup();
