@@ -37,7 +37,9 @@ public class DirSearchParser extends BaseParser {
                     if(radioButton.getText().equalsIgnoreCase("simple-report")){
                         return new URL(urlString);
                     } else if(radioButton.getText().equalsIgnoreCase("plain-text-report")){
-                        return new URL(urlString.split(" {3}")[2]);
+                        if (urlString.matches(".*   .*  .*")) {
+                            return new URL(urlString.split(" {2,3}")[2]);
+                        }
                     }
                 }
             }
