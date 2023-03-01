@@ -24,8 +24,7 @@ public class FlatParser extends BaseParser {
     @Override
     JPanel buildOptionsPanel() {
         JPanel optionsPanel = new JPanel(new GridLayout(0,1));
-        optionsPanel.add(new JLabel("If you did not run GoBuster with the -e flag please enter the base url you " +
-                "ran it against, e.g. https://foo.com. Otherwise, leave it blank."));
+        optionsPanel.add(new JLabel("Enter the domain if your flat file contains only paths."));
         this.domainTextField = new JTextField();
         optionsPanel.add(this.domainTextField);
         return optionsPanel;
