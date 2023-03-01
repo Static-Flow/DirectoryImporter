@@ -1,9 +1,6 @@
 package burp;
 
-import parsers.DirSearchParser;
-import parsers.GoBusterParser;
-import parsers.HttpProbeParser;
-import parsers.FfufParser;
+import parsers.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +18,7 @@ class ImporterPanel extends JPanel {
         tabbedPane.addTab("Dirsearch", new DirSearchParser(callbacks));
         tabbedPane.addTab("HttpProbe", new HttpProbeParser(callbacks));
         tabbedPane.addTab("FFuF", new FfufParser(callbacks));
+        tabbedPane.addTab("FlatList", new FlatParser(callbacks));
         add(tabbedPane);
 
     }
